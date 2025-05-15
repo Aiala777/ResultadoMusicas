@@ -1,0 +1,86 @@
+<!-- admin.html -->
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel do Cantor</title>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <style>
+    body {
+      font-family: 'Georgia', serif;
+      background-color: #fdf6ec;
+      padding: 20px;
+      margin: 0;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #6b3e26;
+      font-size: 6vw;
+    }
+    .pedido {
+      background-color: #fff8f0;
+      border: 1px solid #d6bfa9;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      box-shadow: 1px 1px 4px rgba(0,0,0,0.1);
+    }
+    .pedido strong {
+      color: #8b4513;
+    }
+    .pedido em {
+      color: #a0522d;
+    }
+    .pedido small {
+      display: block;
+      color: #666;
+      margin-top: 5px;
+    }
+    @media (max-width: 480px) {
+      .pedido {
+        font-size: 4vw;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Pedidos de Música</h1>
+  <div id="listaPedidos"></div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBCKDCCDxo1fE8w6Kfr0IOpiZMplkZL6F4",
+      authDomain: "cantor-bd8d6.firebaseapp.com",
+      projectId: "cantor-bd8d6",
+      storageBucket: "cantor-bd8d6.firebasestorage.app",
+      messagingSenderId: "95428328833",
+      appId: "1:95428328833:web:ac027fa7b04ae5a45a7c80"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const lista = document.getElementById('listaPedidos');
+
+    db.collection('pedidos').orderBy('timestamp', 'desc')
+      .onSnapshot(snapshot => {
+        lista.innerHTML = '';
+        snapshot.forEach(doc => {
+          const p = doc.data();
+          const div = document.createElement('div');
+          div.className = 'pedido';
+          const time = p.timestamp?.toDate().toLocaleString() || '';
+          div.innerHTML = `
+            <strong>${p.nome}</strong> pediu <em>"${p.musica}"</em><br>
+            Gênero favorito: ${p.genero}<br>
+            <small>${time}</small>
+          `;
+          lista.appendChild(div);
+        });
+      });
+  </script>
+</body>
+</html>
